@@ -51,7 +51,7 @@
 
     <build>
 
-        <finalName>Springboot Web</finalName>
+        <finalName>Springboot</finalName>
 
         <plugins>
             <plugin>
