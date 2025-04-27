@@ -1,5 +1,5 @@
 # Step 1: Build Stage
-FROM maven:3.9.5-openjdk-21 AS builder
+FROM maven:3.8.5-openjdk-17 AS builder
 
 WORKDIR /opt/app
 
