@@ -38,7 +38,8 @@ pipeline {
             steps {
 			   echo "------------------------------------------"
 				echo "scanning Image"
-                bat "trivy image --severity CRITICAL,HIGH "%IMAGE_NAME%:%IMAGE_TAG%""
+		bat "trivy image --severity CRITICAL,HIGH \"%IMAGE_NAME%:%IMAGE_TAG%\""
+
             }
         }
 
