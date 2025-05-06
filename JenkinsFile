@@ -37,7 +37,7 @@ pipeline {
 	stage('Trivy Scan') {
 	    steps {
 	        echo "Running Trivy scan for %IMAGE_NAME%:%IMAGE_TAG%"
-	        bat """trivy image --severity CRITICAL,HIGH "%IMAGE_NAME%:%IMAGE_TAG%" """
+	        bat 'trivy image -f json -o result.json --severity CRITICAL,HIGH Koushik0802/springboot:48'
 	    }
 	}
 
