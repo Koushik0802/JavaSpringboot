@@ -3,11 +3,10 @@ FROM maven:3.8.5-openjdk-17 AS builder
 
 WORKDIR /opt/app
 
-# Copy the pom.xml and source code
 COPY pom.xml .
+
 COPY src ./src
 
-# Build the application (skip tests to speed up the build)
 RUN mvn clean package -DskipTests
 
 # Step 2: Final Runtime Stage (Distroless)
