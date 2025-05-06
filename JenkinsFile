@@ -4,16 +4,15 @@ pipeline {
         IMAGE_NAME = 'koushik0802/springboot'
         IMAGE_TAG = "${BUILD_NUMBER}"
         CONTAINER_NAME = "springboot_${BUILD_NUMBER}"
-        GIT_USER_NAME = 'Koushik0802' // GitHub username
-        GIT_REPO_NAME = 'JavaSpringboot' // GitHub repository name
+        GIT_USER_NAME = 'Koushik0802'
+        GIT_REPO_NAME = 'JavaSpringboot'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/Koushik0802/JavaSpringboot.git', branch: 'main'
-                echo "------------------------------------------"
-                echo "scanning Git repo"
+                git url: "https://github.com/${env.GIT_USER_NAME}/${env.GIT_REPO_NAME}.git", branch: 'main'
+                echo "Scanning Git repo..."
                 bat "trivy fs ."
             }
         }
@@ -26,48 +25,38 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    echo "------------------------------------------"
-                    echo "Building docker image"
-                    bat "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
-                    bat "docker run -d --name ${CONTAINER_NAME} ${IMAGE_NAME}:${IMAGE_TAG}"
-                }
+                bat "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                bat "docker run -d --name ${CONTAINER_NAME} ${IMAGE_NAME}:${IMAGE_TAG}"
             }
         }
 
         stage('Trivy Scan Image') {
             steps {
-                echo "Running Trivy scan for ${IMAGE_NAME}:${IMAGE_TAG}"
-                bat """
-                trivy image --severity CRITICAL,HIGH ${IMAGE_NAME}:${IMAGE_TAG}
-                """
+                echo "Running Trivy scan on image ${IMAGE_NAME}:${IMAGE_TAG}"
+                bat "trivy image --severity CRITICAL,HIGH ${IMAGE_NAME}:${IMAGE_TAG}"
             }
         }
 
         stage('Login and Push to Docker Hub') {
             steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'Docker-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        echo "------------------------------------------"
-                        echo "Pushing image into Docker Hub"
-                        bat "docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}"
-                        bat "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
-                    }
+                withCredentials([usernamePassword(credentialsId: 'Docker-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    bat "docker login -u %DOCKER_USER% -p %DOCKER_PASS%"
+                    bat "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
                 }
             }
         }
 
-        stage('Updating Manifest') {
+        stage('Update Manifest and Push to GitHub') {
             steps {
-            withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
-        bat '''
-            git config user.email "gurralakoushik69@gmail.com"
-            git config user.name "Koushik0802"
-            powershell -Command "(Get-Content -Path deployment.yml) | ForEach-Object { \$_ -replace 'latest', '$IMAGE_TAG } | Set-Content -Path deployment.yml"
-            git add -u deployment.yml
-            git commit -m "Update deployment image to %BUILD_NUMBER%"
-            git push https://%GIT_USER_NAME%:%GITHUB_TOKEN%@github.com/%GIT_USER_NAME%/%GIT_REPO_NAME%.git HEAD:main
-        '''
+                withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+                    bat '''
+                        git config user.email "gurralakoushik69@gmail.com"
+                        git config user.name "Koushik0802"
+                        powershell -Command "(Get-Content -Path deployment.yml) -replace 'image:.*', 'image: koushik0802/springboot:${env:BUILD_NUMBER}' | Set-Content -Path deployment.yml"
+                        git add deployment.yml
+                        git commit -m \"Update image to build ${env:BUILD_NUMBER}\"
+                        git push https://${env:GIT_USER_NAME}:${env:GITHUB_TOKEN}@github.com/${env:GIT_USER_NAME}/${env:GIT_REPO_NAME}.git HEAD:main
+                    '''
                 }
             }
         }
@@ -75,10 +64,10 @@ pipeline {
 
     post {
         success {
-            echo "Build and Deployment completed successfully!"
+            echo "✅ Build and deployment completed successfully."
         }
         failure {
-            echo "Something went wrong in the pipeline."
+            echo "❌ Something went wrong in the pipeline."
         }
     }
 }
