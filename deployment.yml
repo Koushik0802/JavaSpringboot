@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: Springboot
-        image: koushik0802/springboot:latest
+        image: hub.docker.com/docker/koushik0802/springboot:latest
         ports:
         - containerPort: 8081
