@@ -33,6 +33,14 @@ pipeline {
                 }
             }
         }
+	stage('Trivy Scan Image') {
+	    steps {
+	        echo "Running Trivy scan for %IMAGE_NAME%:%IMAGE_TAG%"
+	        bat """
+	        trivy image  --severity CRITICAL,HIGH "%IMAGE_NAME%:%IMAGE_TAG%"
+	        """
+	    }
+	}
 
         stage('Login and Push to Docker Hub') {
             steps {
@@ -40,7 +48,7 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'Docker-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         echo "------------------------------------------"
 				        echo "pushing image into hub "
-						bat "docker login -u %DOCKER_USER% -p %DOCKER_PASS%"
+						
                         bat "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
                     }
                 }
