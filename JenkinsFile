@@ -11,6 +11,8 @@ pipeline {
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/Koushik0802/JavaSpringboot.git', branch: 'main'
+				echo "------------------------------------------"
+				echo "scanning Git repo"
                 bat "trivy fs ."
             }
         }
@@ -24,6 +26,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
+				echo "------------------------------------------"
+				echo "Building docker image"
                     bat "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
                     bat "docker run -d --name ${CONTAINER_NAME} ${IMAGE_NAME}:${IMAGE_TAG}"
                 }
@@ -32,7 +36,9 @@ pipeline {
 
         stage('Trivy Scan') {
             steps {
-                bat "trivy image --severity CRITICAL,HIGH ${IMAGE_NAME}:${IMAGE_TAG}"
+			   echo "------------------------------------------"
+				echo "scanning Image"
+                bat "trivy image --severity CRITICAL,HIGH "%IMAGE_NAME%:%IMAGE_TAG%" "
             }
         }
 
@@ -40,7 +46,9 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'Docker-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        bat "docker login -u %DOCKER_USER% -p %DOCKER_PASS%"
+                        echo "------------------------------------------"
+				        echo "pushing image into hub "
+						bat "docker login -u %DOCKER_USER% -p %DOCKER_PASS%"
                         bat "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
                     }
                 }
