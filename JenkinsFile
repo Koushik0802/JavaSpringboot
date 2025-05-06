@@ -56,7 +56,7 @@ agent any
                         powershell -Command "(Get-Content -Path deployment.yml) -replace 'image:.*', 'image: koushik0802/springboot:${env:BUILD_NUMBER}' | Set-Content -Path deployment.yml"
                         git add deployment.yml
                         git commit -m \"Update image to build ${env:BUILD_NUMBER}\"
-                        git push https://${env:GIT_USER_NAME}:${env:GITHUB_TOKEN}@github.com/${env:GIT_USER_NAME}/${env:GIT_REPO_NAME}.git HEAD:main
+                        git push https://${GITHUB_TOKEN}@github.com/Koushik0802/JavaSpringboot HEAD:main
                     '''
                 }
             }
