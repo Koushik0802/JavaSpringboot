@@ -60,14 +60,14 @@ pipeline {
 
         stage('Updating Manifest') {
             steps {
-                withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+                withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
                     bat '''
                     git config user.email "gurralakoushik69@gmail.com"
                     git config user.name "Koushik0802"
                     powershell -Command "(Get-Content deployment.yml) -replace 'latest', '%BUILD_NUMBER%' | Set-Content deployment.yml"
                     git add deployment.yml
                     git commit -m "Update deployment image to ${BUILD_NUMBER}"
-                    git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
+                    git push https://${GITHUB_TOKEN}@github.com/Koushik0802/JavaSpringboot.git HEAD:main
                     '''
                 }
             }
