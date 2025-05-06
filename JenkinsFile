@@ -24,7 +24,7 @@ pipeline {
             steps {
                 script {
                     bat "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
-                    bat "docker run -d --name ${IMAGE_NAME}_${IMAGE_TAG} ${IMAGE_NAME}:${IMAGE_TAG}"
+                    bat "docker run -d --name ${IMAGE_NAME} ${IMAGE_NAME}:${IMAGE_TAG}"
                 }
             }
         }
