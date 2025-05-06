@@ -3,15 +3,16 @@ pipeline {
   agent any
 
     environment {
-        IMAGE_NAME = 'springboot'
+        IMAGE_NAME = 'Koushik0802/springboot'
         IMAGE_TAG = "${BUILD_NUMBER}"
     }
-stages{
-    stage('Checkout') {
-    steps {
-         git url: 'https://github.com/Koushik0802/JavaSpringboot.git', branch: 'main'
-    }
-}
+        stages{
+            stage('Checkout') {
+            steps {
+                 git url: 'https://github.com/Koushik0802/JavaSpringboot.git', branch: 'main'
+                 trivy fs .
+            }
+        }
 
 
         stage('Build and Test') {
@@ -38,6 +39,16 @@ stages{
             }
         }
     }
+      stage('Login and pushing into Docker Hub') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'Docker-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) 
+        					{
+                    bat "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
+        					}
+              }
+          }
+      }
 
     post {
         success {
