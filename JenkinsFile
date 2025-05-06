@@ -34,15 +34,12 @@ pipeline {
             }
         }
 
-        stage('Trivy Scan') {
-            steps {
-			   echo "------------------------------------------"
-				echo "scanning Image"
-		bat 'trivy image --severity CRITICAL,HIGH "Koushik0802/springboot:${IMAGE_TAG}"'
-
-
-            }
-        }
+stage('Trivy Scan') {
+    steps {
+        echo "Running Trivy scan for %IMAGE_NAME%:%IMAGE_TAG%"
+        bat """trivy image --severity CRITICAL,HIGH "%IMAGE_NAME%:%IMAGE_TAG%" """
+    }
+}
 
         stage('Login and Push to Docker Hub') {
             steps {
