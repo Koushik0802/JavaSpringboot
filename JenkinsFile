@@ -64,11 +64,12 @@ pipeline {
             bat '''
             git config user.email "gurralakoushik69@gmail.com"
             git config user.name "Koushik0802"
-            powershell -Command "$bn = $BUILD_NUMBER; (Get-Content deployment.yml) -replace 'koushik0802/springboot:[\\w.-]+', \\\"koushik0802/springboot:$bn\\\" | Set-Content deployment.yml"
+            powershell -Command "$buildNumber = $env:BUILD_NUMBER; (Get-Content deployment.yml) -replace 'koushik0802/springboot:[\\w.-]+', \\\"koushik0802/springboot:$buildNumber\\\" | Set-Content deployment.yml"
             git add deployment.yml
-            git commit -m "Update deployment image to %BUILD_NUMBER%"
-            git push https://%GIT_USER_NAME%:%GITHUB_TOKEN%@github.com/%GIT_USER_NAME%/%GIT_REPO_NAME%.git HEAD:main
+            git commit -m \"Update deployment image to $env:BUILD_NUMBER\"
+            git push https://$env:GIT_USER_NAME:$env:GITHUB_TOKEN@github.com/$env:GIT_USER_NAME/$env:GIT_REPO_NAME.git HEAD:main
         '''
+
 
                 }
             }
