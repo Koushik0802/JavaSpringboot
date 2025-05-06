@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'Koushik0802/springboot'
+        IMAGE_NAME = 'koushik0802/springboot'
         IMAGE_TAG = "${BUILD_NUMBER}"
         CONTAINER_NAME = "springboot_${BUILD_NUMBER}"
     }
