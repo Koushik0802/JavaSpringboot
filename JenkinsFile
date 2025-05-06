@@ -58,7 +58,7 @@ pipeline {
 
     post {
         success {
-	    cleanWs()
+	    
             echo "✅ Build and Deployment completed successfully!"
         }
         failure {
