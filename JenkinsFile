@@ -66,8 +66,8 @@ pipeline {
                     git config user.name "Koushik0802"
                     powershell -Command "(Get-Content deployment.yml) -replace 'latest', '%BUILD_NUMBER%' | Set-Content deployment.yml"
                     git add deployment.yml
-                    git commit -m "Update deployment image to ${BUILD_NUMBER}"
-                    git push https://${GITHUB_TOKEN}@github.com/Koushik0802/JavaSpringboot.git HEAD:main
+                    git commit -m "Update deployment image to %BUILD_NUMBER%"
+                    git push https://%GITHUB_USER%:%GITHUB_TOKEN%@github.com/Koushik0802/JavaSpringboot.git HEAD:main
                     '''
                 }
             }
