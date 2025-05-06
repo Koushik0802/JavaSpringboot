@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: Springboot-deployment
+  name: nginx-deployment
   labels:
-    app: Springboot
+    app: nginx
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: Springboot
+      app: nginx
   template:
     metadata:
       labels:
-        app: Springboot
+        app: nginx
     spec:
       containers:
-      - name: Springboot
-        image: hub.docker.com/docker/koushik0802/springboot:latest
+      - name: nginx
+        image: nginx:1.14.2
         ports:
-        - containerPort: 8081
+        - containerPort: 80
