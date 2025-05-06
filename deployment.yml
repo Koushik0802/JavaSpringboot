@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: Springboot
-        image: koushik0802/springboot:org.jenkinsci.plugins.workflow.cps.EnvActionImpl@676c49d6:BUILD_NUMBER
+        image: koushik0802/springboot:74@676c49d6:BUILD_NUMBER
         ports:
         - containerPort: 8081
