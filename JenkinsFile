@@ -1,58 +1,58 @@
 pipeline {
-  agent any
+    agent any
 
     environment {
         IMAGE_NAME = 'Koushik0802/springboot'
         IMAGE_TAG = "${BUILD_NUMBER}"
     }
-        stages{
-            stage('Checkout') {
+
+    stages {
+        stage('Checkout') {
             steps {
-                 git url: 'https://github.com/Koushik0802/JavaSpringboot.git', branch: 'main'
-                 trivy fs .
+                git url: 'https://github.com/Koushik0802/JavaSpringboot.git', branch: 'main'
+                bat "trivy fs ."
             }
         }
 
         stage('Build and Test') {
             steps {
-                bat 'mvn clean package -DskipTests' 
+                bat 'mvn clean package -DskipTests'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    echo "Building Docker image..."
                     bat "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
-                    echo "Running Docker container..."
                     bat "docker run -d --name ${IMAGE_NAME}_${IMAGE_TAG} ${IMAGE_NAME}:${IMAGE_TAG}"
                 }
             }
         }
+
         stage('Trivy Scan') {
             steps {
-        echo " Running Trivy Docker image scan..."
-        bat "trivy image --severity CRITICAL,HIGH ${IMAGE_NAME}:${IMAGE_TAG}"      
+                bat "trivy image --severity CRITICAL,HIGH ${IMAGE_NAME}:${IMAGE_TAG}"
+            }
+        }
+
+        stage('Login and Push to Docker Hub') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'Docker-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        bat "docker login -u %DOCKER_USER% -p %DOCKER_PASS%"
+                        bat "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
+                    }
+                }
             }
         }
     }
-      stage('Login and pushing into Docker Hub') {
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'Docker-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) 
-        					{
-                    bat "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
-        					}
-              }
-          }
-      }
 
     post {
         success {
-            echo "Build and Deployment completed successfully!"
+            echo "✅ Build and Deployment completed successfully!"
         }
         failure {
-            echo "Something went wrong in the pipeline."
+            echo "❌ Something went wrong in the pipeline."
         }
     }
 }
