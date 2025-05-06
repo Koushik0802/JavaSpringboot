@@ -1,9 +1,4 @@
 pipeline {
- agent {
-        docker {
-            image 'maven:3.9-openjdk-17'
-                }
-        }
 
     environment {
         IMAGE_NAME = 'koushik0802/springboot'
