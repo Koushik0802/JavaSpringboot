@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: Springboot
-        image: koushik0802/springboot:latest
+        image: koushik0802/springboot:71
         ports:
         - containerPort: 8081
