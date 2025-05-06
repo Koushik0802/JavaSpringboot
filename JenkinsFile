@@ -26,8 +26,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-				echo "------------------------------------------"
-				echo "Building docker image"
+		echo "------------------------------------------"
+		echo "Building docker image"
                     bat "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
                     bat "docker run -d --name ${CONTAINER_NAME} ${IMAGE_NAME}:${IMAGE_TAG}"
                 }
@@ -38,7 +38,7 @@ pipeline {
             steps {
 			   echo "------------------------------------------"
 				echo "scanning Image"
-                bat "trivy image --severity CRITICAL,HIGH "%IMAGE_NAME%:%IMAGE_TAG%" "
+                bat "trivy image --severity CRITICAL,HIGH "%IMAGE_NAME%:%IMAGE_TAG%""
             }
         }
 
