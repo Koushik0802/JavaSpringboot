@@ -1,5 +1,7 @@
 pipeline {
-agent any
+ agent {
+    label 'vikram'
+  }
 
     environment {
         IMAGE_NAME = 'koushik0802/springboot'
