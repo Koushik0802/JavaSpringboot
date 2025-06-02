@@ -55,7 +55,7 @@ pipeline {
                     bat '''
                         git config user.email "gurralakoushik69@gmail.com"
                         git config user.name "Koushik0802"
-                        powershell -Command "(Get-Content -Path deployment.yml) -replace 'image:.*', 'image: koushik0802/springboot:${env:BUILD_NUMBER}' | Set-Content -Path deployment.yml"
+                        powershell -Command "(Get-Content -Path deployment.yml) -replace 'image:.*', 'image: koushik0802/springboot:$($env:BUILD_NUMBER)' | Set-Content -Path deployment.yml"
                         git add deployment.yml
                         git commit -m \"Update image to build ${env:BUILD_NUMBER}\"
                         git push https://${GITHUB_TOKEN}@github.com/Koushik0802/JavaSpringboot HEAD:main
