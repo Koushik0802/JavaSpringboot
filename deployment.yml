@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: koushik0802/springboot:${env:BUILD_NUMBER}
+        image: koushik0802/springboot:$($env:BUILD_NUMBER)
         ports:
         - containerPort: 80
